@@ -291,6 +291,10 @@ function newHand() {
     G.pot = ante;
     
     G.street = 0;
+    G.streetBets = [0, 0, 0];
+    // Note: The $5 ante is NOT added to streetBets[0] here as per the weightedPot calculation in goToShowdown
+    // which adds it separately: 5 * STREET_MULTIPLIERS[0]
+    
     G.currentBet = 0;
     G.lastResult = null;
     G.state = 'betting';
@@ -304,6 +308,7 @@ function confirmBet() {
     if (!canBet()) return;
     G.bankroll -= G.currentBet;
     G.pot += G.currentBet;
+    G.streetBets[G.street] += G.currentBet;
     G.currentBet = 0;
     
     nextStreet();
@@ -311,8 +316,7 @@ function confirmBet() {
 
 function nextStreet() {
     if (G.street === 2) { // Just finished Turn bet
-        G.street++; // Become 3 (River revealed state)
-        G.communityCards[4] = G.deck.pop();
+        G.communityCards[4] = G.deck.pop(); // Reveal River
         updateUI(); 
         setTimeout(goToShowdown, 1000); 
         return;
@@ -335,27 +339,42 @@ function goToShowdown() {
     G.lastResult = result;
     const payEntry = getPayEntry(result.key);
     const multiplier = payEntry.mult;
-    const payout = Math.floor(G.pot * multiplier);
+
+    // Weighted Pot Calculation: ante (street 0) + bets
+    // The ante is $5 (or bankroll if < $5)
+    const ante = Math.min(G.bankroll + G.pot, 5); // Recover actual ante value from pot
+    const weightedPot = G.streetBets.reduce((sum, amount, street) => {
+        return sum + (amount * STREET_MULTIPLIERS[street]);
+    }, ante * STREET_MULTIPLIERS[0]); 
+
+    const payout = Math.floor(weightedPot * multiplier);
     const netGain = payout - G.pot;
 
     G.bankroll += payout;
     G.stats.handsPlayed++;
+
+    // Sound logic: win.wav for Two Pair (index 2) or better, bet.wav for High Card/Pair
+    if (result.index >= 2) {
+        SND.play(SND.win);
+    } else {
+        SND.play(SND.bet);
+    }
+
+    const bonusInfo = `<div class="hand-name">Weighted pot: $${Math.floor(weightedPot)} (early bet bonus)</div>`;
 
     if (multiplier === 0) {
         G.totalLosses++;
         resultBannerEl.innerHTML = `Lost $${G.pot} — ${result.type}`;
     } else if (multiplier < 1) {
         G.totalLosses++;
-        resultBannerEl.innerHTML = `Partial Return — ${result.type}<div class="hand-name">Got $${payout} back (0.5×)</div>`;
-        SND.play(SND.bet);
+        resultBannerEl.innerHTML = `Partial Return — ${result.type}${multiplier > 0 ? bonusInfo : ''}<div class="hand-name">Got $${payout} back (${multiplier}×)</div>`;
     } else if (multiplier === 1) {
-        resultBannerEl.innerHTML = `Break Even — ${result.type}<div class="hand-name">$${G.pot} returned</div>`;
+        resultBannerEl.innerHTML = `Break Even — ${result.type}${bonusInfo}<div class="hand-name">$${payout} returned</div>`;
     } else {
         G.stats.handsWon++;
         if (netGain > G.stats.biggestWin) G.stats.biggestWin = netGain;
         G.totalWins++;
-        resultBannerEl.innerHTML = `Won $${netGain} — ${result.type}<div class="hand-name">${multiplier}× payout</div>`;
-        SND.play(SND.win);
+        resultBannerEl.innerHTML = `Won $${netGain} — ${result.type}${bonusInfo}<div class="hand-name">${multiplier}× payout</div>`;
     }
 
     updateUI(); // This will apply winner highlights without re-flipping
@@ -378,6 +397,7 @@ function fold() {
     setTimeout(() => {
         G.pot = 0;
         G.currentBet = 0;
+        G.streetBets = [0, 0, 0];
         G.state = 'idle';
         resultBannerEl.innerHTML = `Folded — lost $${lost}`;
         updateUI();
@@ -404,6 +424,7 @@ function restart() {
     G.pot = 0;
     G.currentBet = 0;
     G.street = 0;
+    G.streetBets = [0, 0, 0];
     G.stats = { handsPlayed:0, handsWon:0, biggestWin:0 };
     G.totalWins = 0;
     G.totalLosses = 0;

@@ -25,7 +25,8 @@ const PAY_TABLE = [
 ];
 
 const MIN_BET = 5;
-const STREET_CAPS = [20, 50, 100]; // Pre-flop, Flop, Turn
+const STREET_CAPS = [100, 60, 40]; // Pre-flop, Flop, Turn
+const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
 const INITIAL_BANKROLL = 500;
 
 // ─── State Object ────────────────────────────────────────────────
@@ -34,7 +35,8 @@ const G = {
     bankroll: INITIAL_BANKROLL,
     pot: 0,
     currentBet: 0,
-    street: 0, // 0: Pre-flop, 1: Flop, 2: Turn, 3: River
+    street: 0, // 0: Pre-flop, 1: Flop, 2: Turn
+    streetBets: [0, 0, 0], // track raw bets per street for weighting
     holeCards: [],
     communityCards: [],
     deck: [],

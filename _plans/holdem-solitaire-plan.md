@@ -289,7 +289,7 @@ The One Pair row in the pay table is displayed with a loss indicator (e.g. greye
 
 ### What changes
 **Two Pair (2×) becomes the minimum paying hand.**
-Everything below it — High Card and One Pair — pays nothing and loses the pot.
+Everything below it — High Card and One Pair — pays almost nothing or loses the pot.
 
 ### Tension mechanics this creates
 
@@ -320,41 +320,43 @@ With Changes 1 and 2 combined, the player loses the pot approximately **61% of t
 
 ---
 
-## Change 3 — Per-Street Bet Caps
+# Change 3 — Per-Street Bet Caps (Descending)
 
-### What changes
-Maximum bet is no longer a flat $100 per street. It is **capped by street**, ascending as information reveals.
+Caps descend as the board reveals. Maximum commitment is highest under maximum uncertainty.
 
 ### Cap Schedule
 
-| Street | Cap | Rationale |
-|--------|-----|-----------|
-| Pre-Flop | $20 | Minimum information — 2 hole cards only |
-| Flop | $40 | 5 of 7 cards known |
-| Turn | $60 | 6 of 7 cards known |
-| River | $100 | Full information — maximum commitment allowed |
+| Street | Cards Known | Cap |
+|--------|------------|-----|
+| Pre-Flop | 2 of 7 | $100 |
+| Flop | 5 of 7 | $60 |
+| Turn | 6 of 7 | $40 |
 
-### Why this works
+**The River reveal and Showdown occur immediately after the Turn betting round.**
 
-The current exploit is **backloaded betting**: wait until the river confirms a strong hand, then bet the maximum with near-certainty. The cap schedule inverts the incentive structure:
+Maximum pot (betting cap every street): **$200 + $5 ante.**
 
-- **To win big, you must commit early** — when you know less
-- **River bets are still the largest**, but the total pot is limited unless the player was brave on earlier streets
-- **A player who bets $20/$40/$60/$100 on a flush** wins more than one who bets $5/$5/$5/$100 on the same flush
-- **Folding mid-hand is more costly**, because you've already been forced to commit more than under the flat-cap system
+### Early-Bet Bonus Multiplier
 
-### Maximum pot comparison
+Bets placed on earlier streets carry more weight in the final payout calculation.
 
-| Strategy | Old max pot | New max pot |
-|----------|------------|------------|
-| Bet max every street | $400 + $10 ante | **$220 + $10 ante** |
-| Bet max river only | $100 + $10 ante | $100 + $10 ante |
-| Bet max pre-flop + river | $200 + $10 ante | $120 + $10 ante |
+| Street | Cap | Payout Weight |
+|--------|-----|--------------|
+| Pre-Flop | $100 | 1.4× |
+| Flop | $60 | 1.2× |
+| Turn | $40 | 1.0× |
 
-The reduction in maximum pot is intentional. With the new pay table loss rate (~61%), a $400 max pot would too rapidly drain the bankroll. The cap schedule creates sustainable sessions while maintaining per-hand tension.
+Payout at showdown uses the weighted pot, not the raw total. This rewards early bravery under uncertainty.
 
-### Chip UI adjustment
-Chips above the current street cap are **disabled automatically** — not hidden. The player can see what they cannot yet use, which telegraphs that larger bets are coming and builds anticipation.
+### Ante Compatibility
+Ante is $5. Since the pre-flop cap is $100, there is significant headroom for the initial betting round.
+
+### UI
+Chips that would exceed the street cap are disabled. A persistent label shows the active cap:
+
+```
+Max $60 this street
+```
 
 ---
 
@@ -362,26 +364,20 @@ Chips above the current street cap are **disabled automatically** — not hidden
 
 The three changes together restructure every major decision point:
 
-### Pre-Flop (cap $20)
-- **Strong hole cards (A-K, pocket pair):** bet max $20 — you're hoping to hit, and the cap limits the risk
-- **Weak hole cards:** fold for free (ante already paid) or gamble $5–$20
-- **The read:** pre-flop becomes more meaningful because the ante + pre-flop bet is now the "exploration cost"
+### Pre-Flop (cap $100)
+- **Strong hole cards (A-K, pocket pair):** bet max $100 — this is your best chance to build a huge weighted pot.
+- **Weak hole cards:** fold for the $5 ante, or risk a small bet to see the flop.
+- **The read:** pre-flop is where the biggest gambles (and rewards) happen.
 
-### Flop (cap $40)
-- **Made Two Pair or better:** bet confidently — you're in paying territory
-- **One Pair:** the crisis point — do you chase Two Pair on turn/river, or fold and lose the ante + pre-flop bet only?
-- **Flush/straight draw:** pure gamble — bet $40 hoping the turn delivers
-- **Complete blank:** fold. The ante and pre-flop bet are gone, but you've limited damage.
+### Flop (cap $60)
+- **Made Two Pair or better:** bet $60 — you're winning, and the multiplier (1.2×) is still strong.
+- **One Pair:** the crisis point — do you chase the win or fold?
+- **Flush/straight draw:** a $60 gamble with a decent payout weight.
+- **Complete blank:** fold to limit damage.
 
-### Turn (cap $60)
-- **Strong hand:** escalate — $60 goes in, pot is building toward a real payout
-- **Still on a draw:** last chance to commit before the river — the cap forces the decision now, not later
-- **Missed draw:** fold and take the loss on ante + flop + pre-flop, or make a desperate $60 river gamble
-
-### River (cap $100)
-- **Made hand:** bet max — this is where commitment is rewarded
-- **Still One Pair:** lose the pot regardless of river bet — fold is always correct
-- **Missed everything:** fold. Every chip bet here is pure donation.
+### Turn (cap $40)
+- **Last Stand:** with 6 cards known, this is your final chance to bet. The cap is $40.
+- **Decision:** After this bet, the River is revealed and the hand is scored immediately.
 
 ---
 
@@ -389,46 +385,31 @@ The three changes together restructure every major decision point:
 
 ### Pay table rendering
 ```
-0: 'High Card'     → 0× (grey, strikethrough style)
-1: 'One Pair'      → 0× (grey, strikethrough style)
-2: 'Two Pair'      → 2× (first green/gold row)
+0: 'High Card'     → 0× (grey, no highlight)
+1: 'One Pair'      → 0.5× (grey, no highlight)
+2: 'Two Pair'      → 2× (first winning row)
 3–9: unchanged
 ```
 
-Mark the Two Pair row with a subtle dividing line above it — visually communicating "above this line = winning."
-
 ### Bet cap enforcement
 ```javascript
-const STREET_CAPS = [20, 40, 60, 100]; // indexed by street 0–3
+const STREET_CAPS = [100, 60, 40]; // Pre-flop, Flop, Turn
+const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
 
-function maxBetForStreet(street, bank) {
-  return Math.min(STREET_CAPS[street], bank);
+function weightedPot(streetBets) {
+  return streetBets.reduce((sum, amount, street) => sum + amount * STREET_MULTIPLIERS[street], 5 * 1.4);
 }
 ```
 
-Chips that would exceed the cap are `disabled` (not hidden).
-The cap display ("Max $40 this street") is shown persistently near the chip row.
-
-### Ante unchanged
-$10 forced ante on deal. This is not affected by the redesign.
-
-### Bankroll calibration
-Starting bankroll remains **$500**. With a ~61% loss rate and average pot of ~$110:
-- Expected loss per hand ≈ $67 × 0.61 − $43 × 0.39 ≈ $24 net loss per hand
-- Expected session length ≈ 20 hands before bust at break-even play
-- A skilled session (good folding discipline) extends to 30–40 hands
-
-This matches the solitaire session arc: long enough to feel like an achievement, short enough that each hand matters.
+### Ante
+$5 forced ante on deal.
 
 ---
 
 ## What Is Not Changed
 
 - Hand evaluator: unchanged
-- Heads-Up mode: entirely unaffected
-- Community card reveal sequence: unchanged
-- Ante: unchanged ($10)
-- Starting bankroll: unchanged ($500)
+- Starting bankroll: $500
 - Pay table multipliers for Two Pair and above: unchanged
 - Fold mechanic: unchanged
 
@@ -436,7 +417,6 @@ This matches the solitaire session arc: long enough to feel like an achievement,
 
 ## Open Questions
 
-- **Visual treatment of losing rows:** strikethrough, greyed text, or a small ✗ icon next to 0× hands? Recommendation: grey text + `0×` explicit label, no strikethrough (cleaner at small font sizes).
-- **Cap display:** show the cap as a persistent label ("Bet up to $40") or only as disabled chips? Recommendation: both — label + disabled chips reinforce each other.
-- **Ante increase over time?** Out of scope for this plan but noted as a future escalation lever (Change 4 from the ideation session).
-
+- **Visual treatment of losing rows:** grey text + `0×` explicit label.
+- **Cap display:** label + disabled chips reinforce each other.
+- **Ante increase over time?** Future escalation lever.
