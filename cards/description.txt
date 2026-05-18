@@ -1,0 +1,9 @@
+How to decipher cards sets:
+
+- Cards are numbered
+- 00 is empty white card
+- 01 to 13 are Hearts
+- 15 to 27 are Spades
+- 29 to 41 are Diamonds
+- 43 to 55 are clubs
+- 42 and 28 are blue back and red back

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hold'em Solitaire</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1>♠ Hold'em Solitaire</h1>
+        <div class="bankroll">Bank: $<span id="bankroll">500</span></div>
+    </header>
+
+    <div id="pay-table-container">
+        <div id="pay-table-header">Pay Table ▾</div>
+        <div id="pay-table"></div>
+    </div>
+
+    <div id="card-area">
+        <div id="hole-cards"></div>
+        <div class="community-label">— Community Cards —</div>
+        <div id="community-cards"></div>
+        <div id="current-hand-display"></div>
+    </div>
+
+    <div id="controls">
+        <div id="street-indicator">
+            <span class="street-pip" data-street="0"></span>
+            <span class="street-pip" data-street="1"></span>
+            <span class="street-pip" data-street="2"></span>
+        </div>
+        <div id="pot-display">
+            <span class="pot-label">Pot: <span class="pot-value" id="pot-value">$0</span></span>
+            <span id="current-bet">+ $0</span>
+        </div>
+        <div id="chip-buttons">
+            <button class="chip chip-5" data-value="5" disabled><div class="chip-icon"></div>$5</button>
+            <button class="chip chip-10" data-value="10" disabled><div class="chip-icon"></div>$10</button>
+            <button class="chip chip-25" data-value="25" disabled><div class="chip-icon"></div>$25</button>
+            <button class="chip chip-50" data-value="50" disabled><div class="chip-icon"></div>$50</button>
+            <button class="chip chip-100" data-value="100" disabled><div class="chip-icon"></div>$100</button>
+        </div>
+        <div id="action-buttons">
+            <button class="action-btn" id="fold-btn">Fold</button>
+            <button class="action-btn" id="clear-btn">Clear</button>
+            <button class="action-btn" id="allin-btn">All In</button>
+            <button class="action-btn" id="deal-btn">New Hand</button>
+            <button class="action-btn" id="bet-btn">Confirm</button>
+        </div>
+        <div id="streak-display"></div>
+    </div>
+
+    <div id="result-banner"></div>
+</div>
+
+<div id="game-over-overlay">
+    <div class="go-window">
+        <div class="go-header">Game Over</div>
+        <div class="go-body">
+            <h2>You've run out of funds.</h2>
+            <div class="stat-grid">
+                <div>Hands Played</div><div id="go-hands">0</div>
+                <div>Hands Won</div><div id="go-won">0</div>
+                <div>Win Rate</div><div id="go-rate">0%</div>
+                <div>Biggest Win</div><div id="go-biggest">$0</div>
+            </div>
+            <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modular Scripts -->
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
