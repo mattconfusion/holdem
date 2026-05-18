@@ -24,7 +24,7 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **Pre-Flop:** 2 hole cards visible.
     *   **Flop:** 3 community cards revealed.
     *   **Turn:** 4th community card revealed.
-    *   **River:** 5th and final community card revealed.
+    *   **River & Showdown:** 5th and final community card revealed.
 3.  **Place Your Bets:** On each street, you can choose to:
     *   **Bet:** Add chips ($5 to $100 per street) to the pot.
     *   **Fold:** Give up the hand and lose all chips currently in the pot.
@@ -39,7 +39,8 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **Four of a Kind:** 25×
     *   **Straight Flush:** 50×
     *   **Royal Flush:** 100×
-    *   *High Card, One Pair (or Fold) results in losing the pot (0×).*
+    *   *High Card (or Fold) results in losing the pot (0×).*
+    *   *One Pair results in losing half the pot (0.5×).*
 
 Keep playing as long as you have funds in your bankroll. Good luck!
 
@@ -47,7 +48,7 @@ Keep playing as long as you have funds in your bankroll. Good luck!
 
 ### Sounds
 
-correct by ertfelda -- https://freesound.org/s/243701/ -- License: Creative Commons 0
-chip01 by SilverDubloons -- https://freesound.org/s/817553/ -- License: Creative Commons 0
-cardsound32562 by memes_hodachy -- https://freesound.org/s/554208/ -- License: Creative Commons 0
-AllInPushChips.wav by Joma86 -- https://freesound.org/s/532861/ -- License: Creative Commons 0
+- correct by ertfelda -- https://freesound.org/s/243701/ -- License: Creative Commons 0
+- chip01 by SilverDubloons -- https://freesound.org/s/817553/ -- License: Creative Commons 0
+- cardsound32562 by memes_hodachy -- https://freesound.org/s/554208/ -- License: Creative Commons 0
+- AllInPushChips.wav by Joma86 -- https://freesound.org/s/532861/ -- License: Creative Commons 0
