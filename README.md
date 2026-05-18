@@ -31,7 +31,6 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **All-In:** Bet the maximum allowed amount in one click.
 4.  **Showdown:** After the River betting round, your best 5-card hand is evaluated.
 5.  **Payout:** If you have a winning hand (One Pair or better), your **Total Pot** (the sum of all bets across all streets) is multiplied by the hand's multiplier:
-    *   **One Pair:** 1× (Break even)
     *   **Two Pair:** 2×
     *   **Three of a Kind:** 3×
     *   **Straight:** 5×
@@ -40,6 +39,15 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **Four of a Kind:** 25×
     *   **Straight Flush:** 50×
     *   **Royal Flush:** 100×
-    *   *High Card (or Fold) results in losing the pot (0×).*
+    *   *High Card, One Pair (or Fold) results in losing the pot (0×).*
 
 Keep playing as long as you have funds in your bankroll. Good luck!
+
+## Credits
+
+### Sounds
+
+correct by ertfelda -- https://freesound.org/s/243701/ -- License: Creative Commons 0
+chip01 by SilverDubloons -- https://freesound.org/s/817553/ -- License: Creative Commons 0
+cardsound32562 by memes_hodachy -- https://freesound.org/s/554208/ -- License: Creative Commons 0
+AllInPushChips.wav by Joma86 -- https://freesound.org/s/532861/ -- License: Creative Commons 0

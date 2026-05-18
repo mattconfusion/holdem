@@ -12,20 +12,20 @@ const SUIT_SYMBOLS = { 'h':'♥','s':'♠','d':'♦','c':'♣' };
 const SUIT_OFFSETS = { 'h':1, 's':15, 'd':29, 'c':43 };
 
 const PAY_TABLE = [
-    { rank:'Royal Flush',      mult:100, key:'ROYAL_FLUSH' },
-    { rank:'Straight Flush',   mult:50,  key:'STRAIGHT_FLUSH' },
-    { rank:'Four of a Kind',   mult:25,  key:'FOUR_KIND' },
-    { rank:'Full House',       mult:9,   key:'FULL_HOUSE' },
-    { rank:'Flush',            mult:6,   key:'FLUSH' },
-    { rank:'Straight',         mult:5,   key:'STRAIGHT' },
-    { rank:'Three of a Kind',  mult:3,   key:'THREE_KIND' },
-    { rank:'Two Pair',         mult:2,   key:'TWO_PAIR' },
-    { rank:'One Pair',         mult:1,   key:'ONE_PAIR' },
-    { rank:'High Card',        mult:0,   key:'HIGH_CARD' },
+    { rank:'Royal Flush',      mult:100, key:'ROYAL_FLUSH', desc: 'A, K, Q, J, 10, all of the same suit.' },
+    { rank:'Straight Flush',   mult:50,  key:'STRAIGHT_FLUSH', desc: 'Five cards in sequence, all of the same suit.' },
+    { rank:'Four of a Kind',   mult:25,  key:'FOUR_KIND', desc: 'All four cards of the same rank.' },
+    { rank:'Full House',       mult:9,   key:'FULL_HOUSE', desc: 'Three of a kind with a pair.' },
+    { rank:'Flush',            mult:6,   key:'FLUSH', desc: 'Any five cards of the same suit, but not in sequence.' },
+    { rank:'Straight',         mult:5,   key:'STRAIGHT', desc: 'Five cards in sequence, but not of the same suit.' },
+    { rank:'Three of a Kind',  mult:3,   key:'THREE_KIND', desc: 'Three cards of the same rank.' },
+    { rank:'Two Pair',         mult:2,   key:'TWO_PAIR', desc: 'Two different pairs.' },
+    { rank:'One Pair',         mult:0.5, key:'ONE_PAIR', desc: 'Two cards of the same rank.' },
+    { rank:'High Card',        mult:0,   key:'HIGH_CARD', desc: 'When you have none of the above hands, the highest card plays.' },
 ];
 
 const MIN_BET = 5;
-const MAX_BET_STREET = 100;
+const STREET_CAPS = [20, 50, 100]; // Pre-flop, Flop, Turn
 const INITIAL_BANKROLL = 500;
 
 // ─── State Object ────────────────────────────────────────────────

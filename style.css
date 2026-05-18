@@ -87,6 +87,11 @@ h1 {
     color: #fff;
 }
 
+.pt-row.losing-row .pt-hand, .pt-row.losing-row .pt-mult {
+    color: #888;
+    text-decoration: line-through;
+}
+
 .pt-hand {
     padding: 1px 6px;
     border-bottom: 1px solid #c0c0c0;
@@ -206,8 +211,17 @@ h1 {
 #street-indicator {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     margin-bottom: 8px;
+    position: relative;
+}
+
+#street-cap-label {
+    font-size: 10px;
+    color: #000;
+    margin-left: 10px;
+    font-weight: bold;
 }
 
 .street-pip {
@@ -389,6 +403,114 @@ h1 {
 
 #game-over-overlay.show {
     display: flex;
+}
+
+/* ─── Win95 Styles ────────────────────────────────────────────── */
+.win95-window {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 2px;
+    box-shadow: 1px 1px 0 #000;
+}
+
+.win95-title-bar {
+    background: #000080;
+    color: #fff;
+    padding: 2px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.win95-btn {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 4px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    box-shadow: 1px 1px 0 #000;
+    font-family: inherit;
+}
+
+.win95-btn:active {
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: none;
+}
+
+.win95-close-btn {
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #fff #808080 #808080 #fff;
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+    line-height: 10px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+}
+
+.win95-close-btn:active {
+    border-color: #808080 #fff #fff #808080;
+}
+
+/* ─── Modal Overlays ──────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.msg-box {
+    min-width: 250px;
+    max-width: 90%;
+}
+
+.msg-box-body {
+    padding: 15px;
+}
+
+#msg-box-content {
+    margin-bottom: 15px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #000;
+}
+
+.msg-box-actions {
+    display: flex;
+    justify-content: center;
+}
+
+#msg-box-content a {
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+/* ─── Existing Styles Adjustment ─────────────────────────────── */
+header h1 {
+    cursor: pointer;
+}
+
+header h1:hover {
+    color: #000080;
 }
 
 .go-window {

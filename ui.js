@@ -19,7 +19,29 @@ const foldBtn = $('fold-btn');
 const clearBtn = $('clear-btn');
 const allinBtn = $('allin-btn');
 const handDisplayEl = $('current-hand-display');
+const streetCapLabelEl = $('street-cap-label');
 const chipBtns = document.querySelectorAll('.chip');
+
+// Message Box Elements
+const msgBoxOverlay = $('msg-box-overlay');
+const msgBoxTitle = $('msg-box-title');
+const msgBoxContent = $('msg-box-content');
+const msgBoxOk = $('msg-box-ok');
+const msgBoxCloseX = $('msg-box-close-x');
+
+// ─── Sounds ──────────────────────────────────────────────────────
+const SND = {
+    card: new Audio('sounds/card.mp3'),
+    bet: new Audio('sounds/bet.wav'),
+    allin: new Audio('sounds/allin.wav'),
+    win: new Audio('sounds/win.wav'),
+    play(sound) {
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Audio play blocked:', e));
+        }
+    }
+};
 
 // ─── Card Image Helpers ──────────────────────────────────────────
 function cardToImageNum(rank, suit) {
@@ -43,9 +65,16 @@ function renderPayTable() {
     payTableEl.innerHTML = '';
     PAY_TABLE.forEach(entry => {
         const row = document.createElement('div');
-        row.className = 'pt-row';
+        row.className = 'pt-row' + (entry.mult < 1 ? ' losing-row' : '');
         row.dataset.key = entry.key;
         row.innerHTML = `<div class="pt-hand">${entry.rank}</div><div class="pt-mult">${entry.mult}×</div>`;
+        
+        // Add click listener for explanation
+        row.style.cursor = 'pointer';
+        row.onclick = () => {
+            showMessageBox(entry.rank, entry.desc);
+        };
+        
         payTableEl.appendChild(row);
     });
 }
@@ -58,21 +87,37 @@ function highlightPayTable(key) {
     }
 }
 
+function showMessageBox(title, content, isHtml = false) {
+    msgBoxTitle.textContent = title;
+    if (isHtml) {
+        msgBoxContent.innerHTML = content;
+    } else {
+        msgBoxContent.textContent = content;
+    }
+    msgBoxOverlay.classList.add('show');
+}
+
+function hideMessageBox() {
+    msgBoxOverlay.classList.remove('show');
+}
+
 // ─── Betting Helpers ─────────────────────────────────────────────
 function maxBetThisStreet() {
-    return Math.min(MAX_BET_STREET, G.bankroll);
+    return Math.min(STREET_CAPS[G.street], G.bankroll);
 }
 
 function canBet() {
+    // If no money left, must be able to proceed to see next cards (check is allowed)
     if (G.bankroll === 0) return G.currentBet === 0;
-    // Allow true All-In regardless of street limits
-    if (G.currentBet === G.bankroll) return true;
+    
+    // True All-In bypasses street caps
+    if (G.currentBet === G.bankroll && G.bankroll > 0) return true;
     
     const max = maxBetThisStreet();
-    // If bankroll is less than MIN_BET, only All-In (already handled) or checking (if allowed)
-    if (G.bankroll < MIN_BET) return G.currentBet === G.bankroll;
+    // If bankroll > 0, a bet of at least MIN_BET (or the full bankroll if < MIN_BET) is required
+    const minRequired = Math.min(G.bankroll, MIN_BET);
     
-    return G.currentBet >= MIN_BET && G.currentBet <= max;
+    return G.currentBet >= minRequired && G.currentBet <= max;
 }
 
 function updateBetDisplay() {
@@ -125,6 +170,7 @@ function renderCards(isNewHand = false) {
             setTimeout(() => {
                 requestAnimationFrame(() => {
                     slot.classList.add('flipped');
+                    SND.play(SND.card);
                     applyWinnerHighlight(slot, card);
                 });
             }, i * 150 + 100);
@@ -155,6 +201,7 @@ function renderCards(isNewHand = false) {
                 setTimeout(() => {
                     requestAnimationFrame(() => {
                         slot.classList.add('flipped');
+                        SND.play(SND.card);
                         applyWinnerHighlight(slot, card);
                     });
                 }, (isNewHand ? G.holeCards.length + i : i) * 150 + 100);
@@ -182,6 +229,15 @@ function updateUI(skipCards = false) {
     bankrollEl.textContent = G.bankroll;
     updateBetDisplay();
     updateChips();
+    
+    if (streetCapLabelEl) {
+        const betting = G.state === 'betting';
+        const cap = STREET_CAPS[G.street];
+        streetCapLabelEl.style.display = (betting && cap !== undefined) ? '' : 'none';
+        if (betting && cap !== undefined) {
+            streetCapLabelEl.textContent = `Max $${cap}`;
+        }
+    }
     
     // Streaks
     const winStr = G.totalWins > 0 ? `Wins: ${G.totalWins}` : 'Wins: 0';
@@ -222,6 +278,7 @@ function updateUI(skipCards = false) {
 
 // ─── Actions ─────────────────────────────────────────────────────
 function newHand() {
+    SND.play(SND.card);
     G.deck = shuffle(createDeck());
     G.holeCards = [G.deck.pop(), G.deck.pop()];
     G.communityCards = [null, null, null, null, null];
@@ -229,7 +286,7 @@ function newHand() {
     // Cycle card back for each hand
     currentBackIdx++;
     
-    const ante = Math.min(G.bankroll, MIN_BET);
+    const ante = Math.min(G.bankroll, 5);
     G.bankroll -= ante;
     G.pot = ante;
     
@@ -278,7 +335,7 @@ function goToShowdown() {
     G.lastResult = result;
     const payEntry = getPayEntry(result.key);
     const multiplier = payEntry.mult;
-    const payout = G.pot * multiplier;
+    const payout = Math.floor(G.pot * multiplier);
     const netGain = payout - G.pot;
 
     G.bankroll += payout;
@@ -287,6 +344,10 @@ function goToShowdown() {
     if (multiplier === 0) {
         G.totalLosses++;
         resultBannerEl.innerHTML = `Lost $${G.pot} — ${result.type}`;
+    } else if (multiplier < 1) {
+        G.totalLosses++;
+        resultBannerEl.innerHTML = `Partial Return — ${result.type}<div class="hand-name">Got $${payout} back (0.5×)</div>`;
+        SND.play(SND.bet);
     } else if (multiplier === 1) {
         resultBannerEl.innerHTML = `Break Even — ${result.type}<div class="hand-name">$${G.pot} returned</div>`;
     } else {
@@ -294,15 +355,17 @@ function goToShowdown() {
         if (netGain > G.stats.biggestWin) G.stats.biggestWin = netGain;
         G.totalWins++;
         resultBannerEl.innerHTML = `Won $${netGain} — ${result.type}<div class="hand-name">${multiplier}× payout</div>`;
+        SND.play(SND.win);
     }
 
     updateUI(); // This will apply winner highlights without re-flipping
-    if (G.bankroll <= 0 && multiplier === 0) {
+    if (G.bankroll <= 0 && payout === 0) {
         setTimeout(gameOver, 1500);
     }
 }
 
 function fold() {
+    SND.play(SND.card);
     const lost = G.pot;
     G.stats.handsPlayed++;
     G.totalLosses++;
@@ -348,6 +411,7 @@ function restart() {
     $('game-over-overlay').classList.remove('show');
     resultBannerEl.innerHTML = '';
     updateUI();
+    newHand();
 }
 
 // ─── Event Listeners ─────────────────────────────────────────────
@@ -357,6 +421,7 @@ chipBtns.forEach(btn => {
         const max = maxBetThisStreet();
         if (G.currentBet + val <= max) {
             G.currentBet += val;
+            SND.play(SND.bet);
             updateUI();
         }
     };
@@ -366,8 +431,33 @@ dealBtn.onclick = newHand;
 betBtn.onclick = confirmBet;
 foldBtn.onclick = fold;
 clearBtn.onclick = () => { G.currentBet = 0; updateUI(); };
-allinBtn.onclick = () => { G.currentBet = G.bankroll; updateUI(); };
+allinBtn.onclick = () => { 
+    if (G.bankroll > 0 && G.currentBet !== G.bankroll) {
+        G.currentBet = G.bankroll; 
+        SND.play(SND.allin);
+        updateUI(); 
+    }
+};
 $('restart-btn').onclick = restart;
+
+// Message Box Events
+msgBoxOk.onclick = hideMessageBox;
+msgBoxCloseX.onclick = hideMessageBox;
+msgBoxOverlay.onclick = (e) => {
+    if (e.target === msgBoxOverlay) hideMessageBox();
+};
+
+// Title Click
+document.querySelector('header h1').onclick = () => {
+    const aboutContent = `
+        <div style="text-align: center;">
+            <p><strong>Hold'em Solitaire</strong></p>
+            <p>A single-player poker game.</p>
+            <p><a href="https://github.com/mattconfusion/holdem" target="_blank">View on GitHub</a></p>
+        </div>
+    `;
+    showMessageBox('About', aboutContent, true);
+};
 
 // ─── Init ────────────────────────────────────────────────────────
 renderPayTable();

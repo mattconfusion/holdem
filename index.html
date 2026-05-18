@@ -37,6 +37,7 @@
             <span class="street-pip" data-street="0"></span>
             <span class="street-pip" data-street="1"></span>
             <span class="street-pip" data-street="2"></span>
+            <div id="street-cap-label">Max $20</div>
         </div>
         <div id="pot-display">
             <span class="pot-label">Pot: <span class="pot-value" id="pot-value">$0</span></span>
@@ -60,6 +61,22 @@
     </div>
 
     <div id="result-banner"></div>
+</div>
+
+<!-- Win95 Message Box -->
+<div id="msg-box-overlay" class="modal-overlay">
+    <div class="msg-box win95-window">
+        <div class="win95-title-bar">
+            <span id="msg-box-title">Message</span>
+            <button class="win95-close-btn" id="msg-box-close-x">×</button>
+        </div>
+        <div class="msg-box-body">
+            <div id="msg-box-content"></div>
+            <div class="msg-box-actions">
+                <button class="win95-btn" id="msg-box-ok">OK</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="game-over-overlay">

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'holdem-solitaire-v1';
+const CACHE_NAME = 'holdem-solitaire-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,10 @@ const ASSETS = [
   './apple-touch-icon.png',
   './android-chrome-192x192.png',
   './android-chrome-512x512.png',
+  './sounds/allin.wav',
+  './sounds/bet.wav',
+  './sounds/card.mp3',
+  './sounds/win.wav',
   ...Array.from({length: 56}, (_, i) => `./cards/${i.toString().padStart(2, '0')}_kerenel_Cards.png`)
 ];
 
