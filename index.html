@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -80,5 +81,14 @@
 <!-- Modular Scripts -->
 <script src="engine.js"></script>
 <script src="ui.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registered', reg))
+                .catch(err => console.error('Service Worker registration failed', err));
+        });
+    }
+</script>
 </body>
 </html>
