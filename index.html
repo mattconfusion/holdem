@@ -10,6 +10,10 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#ffffff">
+    <!-- Cache-Control headers for GitHub Pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -53,7 +57,7 @@
         <div id="action-buttons">
             <button class="action-btn" id="fold-btn">Fold</button>
             <button class="action-btn" id="clear-btn">Clear</button>
-            <button class="action-btn" id="allin-btn">Max Bet</button>
+            <button class="action-btn" id="maxbet-btn">Max Bet</button>
             <button class="action-btn" id="deal-btn">New Hand</button>
             <button class="action-btn" id="bet-btn">Confirm</button>
         </div>
@@ -102,7 +106,18 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registered', reg))
+                .then(reg => {
+                    console.log('Service Worker registered');
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('New version available, reloading...');
+                                window.location.reload();
+                            }
+                        };
+                    };
+                })
                 .catch(err => console.error('Service Worker registration failed', err));
         });
     }

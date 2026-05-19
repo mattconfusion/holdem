@@ -46,9 +46,15 @@ Keep playing as long as you have funds in your bankroll. Good luck!
 
 ## Credits
 
+### Pixel art
+
+- https://kerenel.itch.io/pixelart-cards -- License: Creative Commons 0
+- https://ivoryred.itch.io/pixel-poker-cards -- License: Creative Commons CC BY 4.0
+
 ### Sounds
 
 - correct by ertfelda -- https://freesound.org/s/243701/ -- License: Creative Commons 0
 - chip01 by SilverDubloons -- https://freesound.org/s/817553/ -- License: Creative Commons 0
 - cardsound32562 by memes_hodachy -- https://freesound.org/s/554208/ -- License: Creative Commons 0
 - AllInPushChips.wav by Joma86 -- https://freesound.org/s/532861/ -- License: Creative Commons 0
+- DropCard05 by SilverDubloons -- https://freesound.org/s/817544/ -- License: Creative Commons 0

@@ -17,7 +17,7 @@ const dealBtn = $('deal-btn');
 const betBtn = $('bet-btn');
 const foldBtn = $('fold-btn');
 const clearBtn = $('clear-btn');
-const allinBtn = $('allin-btn');
+const maxBetBtn = $('maxbet-btn');
 const handDisplayEl = $('current-hand-display');
 const streetCapLabelEl = $('street-cap-label');
 const chipBtns = document.querySelectorAll('.chip');
@@ -32,8 +32,9 @@ const msgBoxCloseX = $('msg-box-close-x');
 // ─── Sounds ──────────────────────────────────────────────────────
 const SND = {
     card: new Audio('sounds/card.mp3'),
+    fold: new Audio('sounds/fold.wav'),
     bet: new Audio('sounds/bet.wav'),
-    allin: new Audio('sounds/allin.wav'),
+    gameOver: new Audio('sounds/gameover.wav'),
     win: new Audio('sounds/win.wav'),
     play(sound) {
         if (sound) {
@@ -270,7 +271,7 @@ function updateUI(skipCards = false) {
     
     foldBtn.style.display = betting ? '' : 'none';
     clearBtn.style.display = betting ? '' : 'none';
-    allinBtn.style.display = betting ? '' : 'none';
+    maxBetBtn.style.display = betting ? '' : 'none';
 
     if (!skipCards) renderCards();
     highlightPayTable(showdown && G.lastResult ? G.lastResult.key : null);
@@ -384,7 +385,7 @@ function goToShowdown() {
 }
 
 function fold() {
-    SND.play(SND.card);
+    SND.play(SND.fold);
     const lost = G.pot;
     G.stats.handsPlayed++;
     G.totalLosses++;
@@ -412,6 +413,7 @@ function fold() {
 function gameOver() {
     G.state = 'game-over';
     $('game-over-overlay').classList.add('show');
+    SND.play(SND.gameOver);
     $('go-hands').textContent = G.stats.handsPlayed;
     $('go-won').textContent = G.stats.handsWon;
     const rate = G.stats.handsPlayed > 0 ? Math.round(G.stats.handsWon / G.stats.handsPlayed * 100) : 0;
@@ -452,12 +454,11 @@ dealBtn.onclick = newHand;
 betBtn.onclick = confirmBet;
 foldBtn.onclick = fold;
 clearBtn.onclick = () => { G.currentBet = 0; updateUI(); };
-allinBtn.onclick = () => { 
+maxBetBtn.onclick = () => { 
         const max = maxBetThisStreet();
         G.currentBet += max;
-        SND.play(SND.allin);
+        SND.play(SND.bet);
         updateUI();
-        
 };
 $('restart-btn').onclick = restart;
 

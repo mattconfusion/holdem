@@ -1,4 +1,8 @@
-const CACHE_NAME = 'holdem-solitaire-v2';
+/**
+ * Hold'em Solitaire - Service Worker v3
+ * Updated: 2026-05-19
+ */
+const CACHE_NAME = 'holdem-solitaire-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -12,9 +16,10 @@ const ASSETS = [
   './apple-touch-icon.png',
   './android-chrome-192x192.png',
   './android-chrome-512x512.png',
-  './sounds/allin.wav',
+  './sounds/gameover.wav',
   './sounds/bet.wav',
   './sounds/card.mp3',
+  './sounds/fold.wav',
   './sounds/win.wav',
   ...Array.from({length: 56}, (_, i) => `./cards/${i.toString().padStart(2, '0')}_kerenel_Cards.png`)
 ];
@@ -39,6 +44,31 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Network First strategy for HTML and core logic to avoid stale content on GitHub Pages
+  if (
+    event.request.mode === 'navigate' || 
+    url.pathname.endsWith('/') || 
+    url.pathname.endsWith('index.html') ||
+    url.pathname.endsWith('engine.js') ||
+    url.pathname.endsWith('ui.js') ||
+    url.pathname.endsWith('style.css')
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Update cache with new version
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request)) // Fallback to cache if offline
+    );
+    return;
+  }
+
+  // Cache First for everything else (images, sounds, etc)
   event.respondWith(
     caches.match(event.request)
       .then((response) => response || fetch(event.request))
