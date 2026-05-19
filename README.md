@@ -19,7 +19,7 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
 
 ## How to Play
 
-1.  **Start Hand:** You are dealt 2 hole cards and start with a $500 bankroll.
+1.  **Start Hand:** You are dealt 2 hole cards and start with a $250 bankroll. Ante is increasing progressively
 2.  **Betting Streets:** The game progresses through four stages (streets):
     *   **Pre-Flop:** 2 hole cards visible.
     *   **Flop:** 3 community cards revealed.

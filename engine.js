@@ -38,7 +38,7 @@ function isAnteWarningHand(handsPlayed) {
     return [9, 19, 29].includes(handsPlayed);
 }
 const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
-const INITIAL_BANKROLL = 500;
+const INITIAL_BANKROLL = 250;
 
 // ─── State Object ────────────────────────────────────────────────
 const G = {
