@@ -21,8 +21,13 @@
 <div id="app">
     <header>
         <h1>♠ Hold'em Solitaire</h1>
-        <div class="bankroll">Bank: $<span id="bankroll">500</span></div>
+        <div class="status-bar">
+            <div class="bankroll">Bank: $<span id="bankroll">500</span></div>
+            <div class="ante-display">Ante: $<span id="current-ante">5</span></div>
+        </div>
     </header>
+
+    <div id="ante-warning" class="warning-banner"></div>
 
     <div id="pay-table-container">
         <div id="pay-table-header">Pay Table ▾</div>

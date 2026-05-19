@@ -20,6 +20,8 @@ const clearBtn = $('clear-btn');
 const maxBetBtn = $('maxbet-btn');
 const handDisplayEl = $('current-hand-display');
 const streetCapLabelEl = $('street-cap-label');
+const anteEl = $('current-ante');
+const anteWarningEl = $('ante-warning');
 const chipBtns = document.querySelectorAll('.chip');
 
 // Message Box Elements
@@ -228,6 +230,7 @@ function applyWinnerHighlight(slot, card) {
 // ─── UI Refresh ──────────────────────────────────────────────────
 function updateUI(skipCards = false) {
     bankrollEl.textContent = G.bankroll;
+    anteEl.textContent = currentAnte(G.stats.handsPlayed);
     updateBetDisplay();
     updateChips();
     
@@ -286,12 +289,16 @@ function newHand() {
     
     // Cycle card back for each hand
     currentBackIdx++;
-    
-    const ante = Math.min(G.bankroll, 5);
+
+    const ante = Math.min(G.bankroll, currentAnte(G.stats.handsPlayed));
     G.bankroll -= ante;
     G.pot = ante;
-    
+    G.ante = ante;
+
+    anteWarningEl.classList.remove('show');
+
     G.street = 0;
+
     G.streetBets = [0, 0, 0];
     // Note: The $5 ante is NOT added to streetBets[0] here as per the weightedPot calculation in goToShowdown
     // which adds it separately: 5 * STREET_MULTIPLIERS[0]
@@ -342,17 +349,21 @@ function goToShowdown() {
     const multiplier = payEntry.mult;
 
     // Weighted Pot Calculation: ante (street 0) + bets
-    // The ante is $5 (or bankroll if < $5)
-    const ante = Math.min(G.bankroll + G.pot, 5); // Recover actual ante value from pot
+    // The ante is Recovered from G.ante
     const weightedPot = G.streetBets.reduce((sum, amount, street) => {
         return sum + (amount * STREET_MULTIPLIERS[street]);
-    }, ante * STREET_MULTIPLIERS[0]); 
+    }, G.ante * STREET_MULTIPLIERS[0]); 
 
     const payout = Math.floor(weightedPot * multiplier);
     const netGain = payout - G.pot;
 
     G.bankroll += payout;
     G.stats.handsPlayed++;
+
+    if (isAnteWarningHand(G.stats.handsPlayed)) {
+        anteWarningEl.textContent = "Ante increases next hand.";
+        anteWarningEl.classList.add('show');
+    }
 
     // Sound logic: win.wav for Two Pair (index 2) or better, bet.wav for High Card/Pair
     if (result.index >= 2) {
@@ -388,6 +399,12 @@ function fold() {
     SND.play(SND.fold);
     const lost = G.pot;
     G.stats.handsPlayed++;
+
+    if (isAnteWarningHand(G.stats.handsPlayed)) {
+        anteWarningEl.textContent = "Ante increases next hand.";
+        anteWarningEl.classList.add('show');
+    }
+
     G.totalLosses++;
     
     // Animate folding
@@ -431,6 +448,7 @@ function restart() {
     G.totalWins = 0;
     G.totalLosses = 0;
     G.state = 'idle';
+    anteWarningEl.classList.remove('show');
     $('game-over-overlay').classList.remove('show');
     resultBannerEl.innerHTML = '';
     updateUI();

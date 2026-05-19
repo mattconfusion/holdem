@@ -26,6 +26,17 @@ const PAY_TABLE = [
 
 const MIN_BET = 5;
 const STREET_CAPS = [100, 60, 40]; // Pre-flop, Flop, Turn
+
+function currentAnte(handsPlayed) {
+    if (handsPlayed < 10) return 5;
+    if (handsPlayed < 20) return 10;
+    if (handsPlayed < 30) return 15;
+    return 20;
+}
+
+function isAnteWarningHand(handsPlayed) {
+    return [9, 19, 29].includes(handsPlayed);
+}
 const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
 const INITIAL_BANKROLL = 500;
 
@@ -34,6 +45,7 @@ const G = {
     state: 'idle', // idle, betting, showdown, game-over
     bankroll: INITIAL_BANKROLL,
     pot: 0,
+    ante: 0,
     currentBet: 0,
     street: 0, // 0: Pre-flop, 1: Flop, 2: Turn
     streetBets: [0, 0, 0], // track raw bets per street for weighting
