@@ -453,11 +453,11 @@ betBtn.onclick = confirmBet;
 foldBtn.onclick = fold;
 clearBtn.onclick = () => { G.currentBet = 0; updateUI(); };
 allinBtn.onclick = () => { 
-    if (G.bankroll > 0 && G.currentBet !== G.bankroll) {
-        G.currentBet = G.bankroll; 
+        const max = maxBetThisStreet();
+        G.currentBet += max;
         SND.play(SND.allin);
-        updateUI(); 
-    }
+        updateUI();
+        
 };
 $('restart-btn').onclick = restart;
 

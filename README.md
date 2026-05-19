@@ -28,7 +28,7 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
 3.  **Place Your Bets:** On each street, you can choose to:
     *   **Bet:** Add chips ($5 to $100 per street) to the pot.
     *   **Fold:** Give up the hand and lose all chips currently in the pot.
-    *   **All-In:** Bet the maximum allowed amount in one click.
+    *   **Max Bet:** Bet the maximum allowed amount in one click.
 4.  **Showdown:** After the River betting round, your best 5-card hand is evaluated.
 5.  **Payout:** If you have a winning hand (One Pair or better), your **Total Pot** (the sum of all bets across all streets) is multiplied by the hand's multiplier:
     *   **Two Pair:** 2×
