@@ -49,20 +49,13 @@ h1 {
     font-weight: 700;
 }
 
-.warning-banner {
+.ante-alert {
     background: #ffff00;
     color: #000;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px;
-    margin-bottom: 8px;
-    border: 2px solid #000;
-    display: none;
-}
-
-.warning-banner.show {
-    display: block;
+    padding: 2px 4px;
+    margin-top: 4px;
+    border: 1px solid #000;
+    display: inline-block;
 }
 
 /* Pay Table */
@@ -549,6 +542,10 @@ header h1:hover {
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 12px;
+}
+
+.victory-header {
+    background: #008000; /* Victory green */
 }
 
 .go-body {

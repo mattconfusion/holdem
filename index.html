@@ -27,8 +27,6 @@
         </div>
     </header>
 
-    <div id="ante-warning" class="warning-banner"></div>
-
     <div id="pay-table-container">
         <div id="pay-table-header">Pay Table ▾</div>
         <div id="pay-table"></div>
@@ -46,7 +44,7 @@
             <span class="street-pip" data-street="0"></span>
             <span class="street-pip" data-street="1"></span>
             <span class="street-pip" data-street="2"></span>
-            <div id="street-cap-label">Max $20</div>
+            <div id="street-cap-label">Bet $5 – $100</div>
         </div>
         <div id="pot-display">
             <span class="pot-label">Pot: <span class="pot-value" id="pot-value">$0</span></span>
@@ -100,6 +98,23 @@
                 <div>Biggest Win</div><div id="go-biggest">$0</div>
             </div>
             <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+</div>
+
+<div id="victory-overlay" class="modal-overlay">
+    <div class="go-window victory-window">
+        <div class="go-header victory-header">Victory!</div>
+        <div class="go-body">
+            <h2>Congratulations! You've reached 40 hands.</h2>
+            <div class="stat-grid">
+                <div>Final Bankroll</div><div id="vic-bank">$0</div>
+                <div>Hands Played</div><div id="vic-hands">40</div>
+                <div>Hands Won</div><div id="vic-won">0</div>
+                <div>Win Rate</div><div id="vic-rate">0%</div>
+                <div>Biggest Win</div><div id="vic-biggest">$0</div>
+            </div>
+            <button id="vic-restart-btn" class="win95-btn">Start New Session</button>
         </div>
     </div>
 </div>

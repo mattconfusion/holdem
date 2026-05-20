@@ -13,24 +13,29 @@ Play it here: **[https://mattconfusion.github.io/holdem/](https://mattconfusion.
 
 ## Quick Description
 
-**Hold'em Solitaire** is a single-player Texas Hold'em card game played against a fixed pay table. There are no AI opponents; instead, the tension comes from deciding how much to wager as your hand develops across four betting streets. 
+**Hold'em Solitaire** is a single-player Texas Hold'em card game played against a fixed pay table. There are no AI opponents; instead, the tension comes from deciding how much to wager as your hand develops across multiple betting streets. 
 
-The goal is to build the strongest possible 5-card hand from your 2 hole cards and 5 community cards. Your final payout is determined by multiplying your total wager by the multiplier of your final hand rank.
+The goal is to build the strongest possible 5-card hand from your 2 hole cards and 5 community cards. Your final payout is determined by multiplying your weighted total wager by the multiplier of your final hand rank.
+
+## Key Features
+
+- **Progressive Ante:** The ante increases every 10 hands ($5 → $10 → $15 → $20), creating a session clock that challenges your bankroll management.
+- **Early Bet Bonus:** Bets made on earlier streets carry more weight (Pre-Flop: 1.4×, Flop: 1.2×), rewarding players for committing to strong hole cards early.
+- **Victory Condition:** Reach **40 hands** with a remaining bankroll to win the session and view your final stats.
 
 ## How to Play
 
-1.  **Start Hand:** You are dealt 2 hole cards and start with a $250 bankroll. Ante is increasing progressively
-2.  **Betting Streets:** The game progresses through four stages (streets):
-    *   **Pre-Flop:** 2 hole cards visible.
-    *   **Flop:** 3 community cards revealed.
-    *   **Turn:** 4th community card revealed.
-    *   **River & Showdown:** 5th and final community card revealed.
+1.  **Start Hand:** You are dealt 2 hole cards and start with a $250 bankroll. A forced ante is deducted from your bankroll at the start of every hand.
+2.  **Betting Streets:** The game progresses through three betting rounds:
+    *   **Pre-Flop:** 2 hole cards visible. (Min Bet: $5 | Max Bet: $100)
+    *   **Flop:** 3 community cards revealed. (Min Bet: $10 | Max Bet: $100)
+    *   **Turn:** 4th community card revealed. (Min Bet: $15 | Max Bet: $40)
 3.  **Place Your Bets:** On each street, you can choose to:
-    *   **Bet:** Add chips ($5 to $100 per street) to the pot.
+    *   **Bet:** Add chips (within the street's min/max range) to the pot.
     *   **Fold:** Give up the hand and lose all chips currently in the pot.
-    *   **Max Bet:** Bet the maximum allowed amount in one click.
-4.  **Showdown:** After the River betting round, your best 5-card hand is evaluated.
-5.  **Payout:** If you have a winning hand (One Pair or better), your **Total Pot** (the sum of all bets across all streets) is multiplied by the hand's multiplier:
+    *   **Max Bet:** Bet the maximum allowed amount for that street in one click.
+4.  **Showdown:** After confirming your bet on the Turn, the final **River** card is revealed, and your best 5-card hand is evaluated.
+5.  **Payout:** If you have a winning hand (Two Pair or better), your **Weighted Pot** is multiplied by the hand's multiplier.
     *   **Two Pair:** 2×
     *   **Three of a Kind:** 3×
     *   **Straight:** 5×
@@ -39,10 +44,10 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **Four of a Kind:** 25×
     *   **Straight Flush:** 50×
     *   **Royal Flush:** 100×
-    *   *High Card (or Fold) results in losing the pot (0×).*
-    *   *One Pair results in losing half the pot (0.5×).*
+    *   *One Pair results in a 0.5× "Partial Return" (losing half the weighted pot).*
+    *   *High Card (or Folding) results in losing the pot (0×).*
 
-Keep playing as long as you have funds in your bankroll. Good luck!
+Keep playing to reach the 40-hand milestone. Good luck!
 
 ## Credits
 

@@ -20,8 +20,8 @@ const clearBtn = $('clear-btn');
 const maxBetBtn = $('maxbet-btn');
 const handDisplayEl = $('current-hand-display');
 const streetCapLabelEl = $('street-cap-label');
+const chipRowEl = $('chip-buttons');
 const anteEl = $('current-ante');
-const anteWarningEl = $('ante-warning');
 const chipBtns = document.querySelectorAll('.chip');
 
 // Message Box Elements
@@ -116,11 +116,10 @@ function canBet() {
     // True All-In bypasses street caps
     if (G.currentBet === G.bankroll && G.bankroll > 0) return true;
     
-    const max = maxBetThisStreet();
-    // If bankroll > 0, a bet of at least MIN_BET (or the full bankroll if < MIN_BET) is required
-    const minRequired = Math.min(G.bankroll, MIN_BET);
+    const min = STREET_MINS[G.street];
+    const max = Math.min(STREET_CAPS[G.street], G.bankroll);
     
-    return G.currentBet >= minRequired && G.currentBet <= max;
+    return (G.currentBet === 0) || (G.currentBet >= min && G.currentBet <= max);
 }
 
 function updateBetDisplay() {
@@ -129,7 +128,8 @@ function updateBetDisplay() {
 }
 
 function updateChips() {
-    const max = maxBetThisStreet();
+    const min = STREET_MINS[G.street];
+    const max = Math.min(STREET_CAPS[G.street], G.bankroll);
     chipBtns.forEach(btn => {
         const val = parseInt(btn.dataset.value);
         btn.disabled = (G.state !== 'betting' || G.currentBet + val > max || G.bankroll <= 0);
@@ -236,11 +236,16 @@ function updateUI(skipCards = false) {
     
     if (streetCapLabelEl) {
         const betting = G.state === 'betting';
+        const min = STREET_MINS[G.street];
         const cap = STREET_CAPS[G.street];
         streetCapLabelEl.style.display = (betting && cap !== undefined) ? '' : 'none';
         if (betting && cap !== undefined) {
-            streetCapLabelEl.textContent = `Max $${cap}`;
+            streetCapLabelEl.textContent = `Bet $${min} – $${cap}`;
         }
+    }
+
+    if (chipRowEl) {
+        chipRowEl.style.display = '';
     }
     
     // Streaks
@@ -295,8 +300,6 @@ function newHand() {
     G.pot = ante;
     G.ante = ante;
 
-    anteWarningEl.classList.remove('show');
-
     G.street = 0;
 
     G.streetBets = [0, 0, 0];
@@ -319,17 +322,16 @@ function confirmBet() {
     G.streetBets[G.street] += G.currentBet;
     G.currentBet = 0;
     
-    nextStreet();
-}
-
-function nextStreet() {
-    if (G.street === 2) { // Just finished Turn bet
+    if (G.street === 2) {
         G.communityCards[4] = G.deck.pop(); // Reveal River
         updateUI(); 
         setTimeout(goToShowdown, 1000); 
-        return;
+    } else {
+        nextStreet();
     }
+}
 
+function nextStreet() {
     G.street++;
     if (G.street === 1) { // Flop
         G.communityCards[0] = G.deck.pop();
@@ -360,11 +362,6 @@ function goToShowdown() {
     G.bankroll += payout;
     G.stats.handsPlayed++;
 
-    if (isAnteWarningHand(G.stats.handsPlayed)) {
-        anteWarningEl.textContent = "Ante increases next hand.";
-        anteWarningEl.classList.add('show');
-    }
-
     // Sound logic: win.wav for Two Pair (index 2) or better, bet.wav for High Card/Pair
     if (result.index >= 2) {
         SND.play(SND.win);
@@ -373,24 +370,33 @@ function goToShowdown() {
     }
 
     const bonusInfo = `<div class="hand-name">Weighted pot: $${Math.floor(weightedPot)} (early bet bonus)</div>`;
+    let resultHtml = '';
 
     if (multiplier === 0) {
         G.totalLosses++;
-        resultBannerEl.innerHTML = `Lost $${G.pot} — ${result.type}`;
+        resultHtml = `Lost $${G.pot} — ${result.type}`;
     } else if (multiplier < 1) {
         G.totalLosses++;
-        resultBannerEl.innerHTML = `Partial Return — ${result.type}${multiplier > 0 ? bonusInfo : ''}<div class="hand-name">Got $${payout} back (${multiplier}×)</div>`;
+        resultHtml = `Partial Return — ${result.type}${multiplier > 0 ? bonusInfo : ''}<div class="hand-name">Got $${payout} back (${multiplier}×)</div>`;
     } else if (multiplier === 1) {
-        resultBannerEl.innerHTML = `Break Even — ${result.type}${bonusInfo}<div class="hand-name">$${payout} returned</div>`;
+        resultHtml = `Break Even — ${result.type}${bonusInfo}<div class="hand-name">$${payout} returned</div>`;
     } else {
         G.stats.handsWon++;
         if (netGain > G.stats.biggestWin) G.stats.biggestWin = netGain;
         G.totalWins++;
-        resultBannerEl.innerHTML = `Won $${netGain} — ${result.type}${bonusInfo}<div class="hand-name">${multiplier}× payout</div>`;
+        resultHtml = `Won $${netGain} — ${result.type}${bonusInfo}<div class="hand-name">${multiplier}× payout</div>`;
     }
 
+    if (isAnteWarningHand(G.stats.handsPlayed)) {
+        resultHtml += `<div class="ante-alert">Ante increases next hand.</div>`;
+    }
+    resultBannerEl.innerHTML = resultHtml;
+
     updateUI(); // This will apply winner highlights without re-flipping
-    if (G.bankroll <= 0 && payout === 0) {
+    
+    if (G.stats.handsPlayed >= 40) {
+        setTimeout(showVictory, 1500);
+    } else if (G.bankroll <= 0 && payout === 0) {
         setTimeout(gameOver, 1500);
     }
 }
@@ -399,11 +405,6 @@ function fold() {
     SND.play(SND.fold);
     const lost = G.pot;
     G.stats.handsPlayed++;
-
-    if (isAnteWarningHand(G.stats.handsPlayed)) {
-        anteWarningEl.textContent = "Ante increases next hand.";
-        anteWarningEl.classList.add('show');
-    }
 
     G.totalLosses++;
     
@@ -417,14 +418,38 @@ function fold() {
         G.currentBet = 0;
         G.streetBets = [0, 0, 0];
         G.state = 'idle';
-        resultBannerEl.innerHTML = `Folded — lost $${lost}`;
+        let resultHtml = `Folded — lost $${lost}`;
+        if (isAnteWarningHand(G.stats.handsPlayed)) {
+            resultHtml += `<div class="ante-alert">Ante increases next hand.</div>`;
+        }
+        resultBannerEl.innerHTML = resultHtml;
         updateUI();
         
-        // Trigger new hand after a short pause to show the fold result
-        setTimeout(newHand, 1000);
-        
-        if (G.bankroll < MIN_BET) setTimeout(gameOver, 1200);
+        if (G.stats.handsPlayed >= 40) {
+            setTimeout(showVictory, 1000);
+        } else {
+            // Trigger new hand after a short pause to show the fold result
+            setTimeout(newHand, 1000);
+            if (G.bankroll < MIN_BET) setTimeout(gameOver, 1200);
+        }
     }, 600);
+}
+
+function showVictory() {
+    G.state = 'victory';
+    $('victory-overlay').classList.add('show');
+    
+    // Play sounds in sequence: win.wav then gameover.wav
+    SND.play(SND.win);
+    setTimeout(() => {
+        SND.play(SND.gameOver);
+    }, 1500);
+
+    $('vic-bank').textContent = '$' + G.bankroll;
+    $('vic-won').textContent = G.stats.handsWon;
+    const rate = G.stats.handsPlayed > 0 ? Math.round(G.stats.handsWon / G.stats.handsPlayed * 100) : 0;
+    $('vic-rate').textContent = rate + '%';
+    $('vic-biggest').textContent = '$' + G.stats.biggestWin;
 }
 
 function gameOver() {
@@ -448,8 +473,8 @@ function restart() {
     G.totalWins = 0;
     G.totalLosses = 0;
     G.state = 'idle';
-    anteWarningEl.classList.remove('show');
     $('game-over-overlay').classList.remove('show');
+    $('victory-overlay').classList.remove('show');
     resultBannerEl.innerHTML = '';
     updateUI();
     newHand();
@@ -474,11 +499,12 @@ foldBtn.onclick = fold;
 clearBtn.onclick = () => { G.currentBet = 0; updateUI(); };
 maxBetBtn.onclick = () => { 
         const max = maxBetThisStreet();
-        G.currentBet += max;
+        G.currentBet = max; 
         SND.play(SND.bet);
         updateUI();
 };
 $('restart-btn').onclick = restart;
+$('vic-restart-btn').onclick = restart;
 
 // Message Box Events
 msgBoxOk.onclick = hideMessageBox;

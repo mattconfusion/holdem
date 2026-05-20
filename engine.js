@@ -25,7 +25,8 @@ const PAY_TABLE = [
 ];
 
 const MIN_BET = 5;
-const STREET_CAPS = [100, 60, 40]; // Pre-flop, Flop, Turn
+const STREET_CAPS = [100, 100, 40]; // Pre-flop, Flop, Turn
+const STREET_MINS = [5, 10, 15]; // Pre-flop, Flop, Turn
 
 function currentAnte(handsPlayed) {
     if (handsPlayed < 10) return 5;
