@@ -21,7 +21,7 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
 
 - **Progressive Ante:** The ante increases every 10 hands ($5 → $10 → $15 → $20), creating a session clock that challenges your bankroll management.
 - **Early Bet Bonus:** Bets made on earlier streets carry more weight (Pre-Flop: 1.4×, Flop: 1.2×), rewarding players for committing to strong hole cards early.
-- **Victory Condition:** Reach **40 hands** with a remaining bankroll to win the session and view your final stats.
+- **End Game Condition:** Reach **40 hands** with a remaining bankroll to win the session and view your final stats.
 
 ## How to Play
 
