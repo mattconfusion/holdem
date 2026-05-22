@@ -25,7 +25,7 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
 
 ## How to Play
 
-1.  **Start Hand:** You are dealt 2 hole cards and start with a $250 bankroll. A forced ante is deducted from your bankroll at the start of every hand.
+1.  **Start Hand:** You are dealt 2 hole cards and start with a $500 bankroll. A forced ante is deducted from your bankroll at the start of every hand.
 2.  **Betting Streets:** The game progresses through three betting rounds:
     *   **Pre-Flop:** 2 hole cards visible. (Min Bet: $5 | Max Bet: $100)
     *   **Flop:** 3 community cards revealed. (Min Bet: $10 | Max Bet: $100)
@@ -36,15 +36,15 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   **Max Bet:** Bet the maximum allowed amount for that street in one click.
 4.  **Showdown:** After confirming your bet on the Turn, the final **River** card is revealed, and your best 5-card hand is evaluated.
 5.  **Payout:** If you have a winning hand (Two Pair or better), your **Weighted Pot** is multiplied by the hand's multiplier.
-    *   **Two Pair:** 2×
-    *   **Three of a Kind:** 3×
-    *   **Straight:** 5×
-    *   **Flush:** 6×
-    *   **Full House:** 9×
-    *   **Four of a Kind:** 25×
-    *   **Straight Flush:** 50×
+    *   **Two Pair:** 1.25×
+    *   **Three of a Kind:** 1.5×
+    *   **Straight:** 1.75×
+    *   **Flush:** 2×
+    *   **Full House:** 3×
+    *   **Four of a Kind:** 10×
+    *   **Straight Flush:** 20×
     *   **Royal Flush:** 100×
-    *   *One Pair results in a 0.5× "Partial Return" (losing half the weighted pot).*
+    *   *One Pair results in a 0.25× "Partial Return" (losing most of the weighted pot).*
     *   *High Card (or Folding) results in losing the pot (0×).*
 
 Keep playing to reach the 40-hand milestone. Good luck!

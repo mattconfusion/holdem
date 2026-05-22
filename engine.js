@@ -13,14 +13,14 @@ const SUIT_OFFSETS = { 'h':1, 's':15, 'd':29, 'c':43 };
 
 const PAY_TABLE = [
     { rank:'Royal Flush',      mult:100, key:'ROYAL_FLUSH', desc: 'A, K, Q, J, 10, all of the same suit.' },
-    { rank:'Straight Flush',   mult:50,  key:'STRAIGHT_FLUSH', desc: 'Five cards in sequence, all of the same suit.' },
-    { rank:'Four of a Kind',   mult:25,  key:'FOUR_KIND', desc: 'All four cards of the same rank.' },
-    { rank:'Full House',       mult:9,   key:'FULL_HOUSE', desc: 'Three of a kind with a pair.' },
-    { rank:'Flush',            mult:6,   key:'FLUSH', desc: 'Any five cards of the same suit, but not in sequence.' },
-    { rank:'Straight',         mult:5,   key:'STRAIGHT', desc: 'Five cards in sequence, but not of the same suit.' },
-    { rank:'Three of a Kind',  mult:3,   key:'THREE_KIND', desc: 'Three cards of the same rank.' },
-    { rank:'Two Pair',         mult:2,   key:'TWO_PAIR', desc: 'Two different pairs.' },
-    { rank:'One Pair',         mult:0.5, key:'ONE_PAIR', desc: 'Two cards of the same rank.' },
+    { rank:'Straight Flush',   mult:20,  key:'STRAIGHT_FLUSH', desc: 'Five cards in sequence, all of the same suit.' },
+    { rank:'Four of a Kind',   mult:10,  key:'FOUR_KIND', desc: 'All four cards of the same rank.' },
+    { rank:'Full House',       mult:3,   key:'FULL_HOUSE', desc: 'Three of a kind with a pair.' },
+    { rank:'Flush',            mult:2,   key:'FLUSH', desc: 'Any five cards of the same suit, but not in sequence.' },
+    { rank:'Straight',         mult:1.75, key:'STRAIGHT', desc: 'Five cards in sequence, but not of the same suit.' },
+    { rank:'Three of a Kind',  mult:1.5, key:'THREE_KIND', desc: 'Three cards of the same rank.' },
+    { rank:'Two Pair',         mult:1.25, key:'TWO_PAIR', desc: 'Two different pairs.' },
+    { rank:'One Pair',         mult:0.25, key:'ONE_PAIR', desc: 'Two cards of the same rank.' },
     { rank:'High Card',        mult:0,   key:'HIGH_CARD', desc: 'When you have none of the above hands, the highest card plays.' },
 ];
 
@@ -39,7 +39,7 @@ function isAnteWarningHand(handsPlayed) {
     return [9, 19, 29].includes(handsPlayed);
 }
 const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
-const INITIAL_BANKROLL = 250;
+const INITIAL_BANKROLL = 500;
 
 // ─── State Object ────────────────────────────────────────────────
 const G = {

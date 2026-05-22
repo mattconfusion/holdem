@@ -67,8 +67,12 @@ function getBackImg() {
 function renderPayTable() {
     payTableEl.innerHTML = '';
     PAY_TABLE.forEach(entry => {
+        if (entry.key === 'HIGH_CARD') return;
+
         const row = document.createElement('div');
-        row.className = 'pt-row' + (entry.mult < 1 ? ' losing-row' : '');
+        // Only mark as losing-row if it's not One Pair AND mult < 1
+        const isLosing = entry.mult < 1 && entry.key !== 'ONE_PAIR';
+        row.className = 'pt-row' + (isLosing ? ' losing-row' : '');
         row.dataset.key = entry.key;
         row.innerHTML = `<div class="pt-hand">${entry.rank}</div><div class="pt-mult">${entry.mult}×</div>`;
         
@@ -112,16 +116,15 @@ function maxBetThisStreet() {
 function canBet() {
     // If no money left, must be able to proceed to see next cards (check is allowed)
     if (G.bankroll === 0) return G.currentBet === 0;
-    
+
     // True All-In bypasses street caps
     if (G.currentBet === G.bankroll && G.bankroll > 0) return true;
-    
+
     const min = STREET_MINS[G.street];
     const max = Math.min(STREET_CAPS[G.street], G.bankroll);
-    
-    return (G.currentBet === 0) || (G.currentBet >= min && G.currentBet <= max);
-}
 
+    return (G.currentBet >= min && G.currentBet <= max);
+}
 function updateBetDisplay() {
     potValueEl.textContent = '$' + G.pot;
     currentBetEl.textContent = '+ $' + G.currentBet;
@@ -396,7 +399,7 @@ function goToShowdown() {
     
     if (G.stats.handsPlayed >= 40) {
         setTimeout(showVictory, 1500);
-    } else if (G.bankroll <= 0 && payout === 0) {
+    } else if (G.bankroll < currentAnte(G.stats.handsPlayed)) {
         setTimeout(gameOver, 1500);
     }
 }
@@ -428,9 +431,12 @@ function fold() {
         if (G.stats.handsPlayed >= 40) {
             setTimeout(showVictory, 1000);
         } else {
-            // Trigger new hand after a short pause to show the fold result
-            setTimeout(newHand, 1000);
-            if (G.bankroll < MIN_BET) setTimeout(gameOver, 1200);
+            if (G.bankroll < currentAnte(G.stats.handsPlayed)) {
+                setTimeout(gameOver, 1000);
+            } else {
+                // Trigger new hand after a short pause to show the fold result
+                setTimeout(newHand, 1000);
+            }
         }
     }, 600);
 }
