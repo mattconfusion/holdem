@@ -38,11 +38,17 @@ const SND = {
     bet: new Audio('sounds/bet.wav'),
     gameOver: new Audio('sounds/gameover.wav'),
     win: new Audio('sounds/win.wav'),
+    enabled: localStorage.getItem('holdem_sound_enabled') !== 'false',
     play(sound) {
-        if (sound) {
+        if (this.enabled && sound) {
             sound.currentTime = 0;
             sound.play().catch(e => console.log('Audio play blocked:', e));
         }
+    },
+    toggle() {
+        this.enabled = !this.enabled;
+        localStorage.setItem('holdem_sound_enabled', this.enabled);
+        return this.enabled;
     }
 };
 
@@ -289,6 +295,8 @@ function updateUI(skipCards = false) {
 }
 
 // ─── Actions ─────────────────────────────────────────────────────
+const WELCOME_MSG = "Goal: Resist " + HANDS_TO_PLAY + " hands without breaking the bank. Return to your spouse without loosing too much!";
+
 function newHand() {
     SND.play(SND.card);
     G.deck = shuffle(createDeck());
@@ -306,14 +314,18 @@ function newHand() {
     G.street = 0;
 
     G.streetBets = [0, 0, 0];
-    // Note: The $5 ante is NOT added to streetBets[0] here as per the weightedPot calculation in goToShowdown
-    // which adds it separately: 5 * STREET_MULTIPLIERS[0]
     
     G.currentBet = 0;
     G.lastResult = null;
     G.state = 'betting';
     
-    resultBannerEl.innerHTML = '';
+    // Show welcome message only on the very first hand
+    if (G.stats.handsPlayed === 0) {
+        resultBannerEl.innerHTML = `<div style="font-size: 11px; font-weight: bold;">${WELCOME_MSG}</div>`;
+    } else {
+        resultBannerEl.innerHTML = '';
+    }
+
     renderCards(true); // Explicitly say it's a new hand
     updateUI(true);    // Update text/buttons but skip card re-render
 }
@@ -397,7 +409,7 @@ function goToShowdown() {
 
     updateUI(); // This will apply winner highlights without re-flipping
     
-    if (G.stats.handsPlayed >= 40) {
+    if (G.stats.handsPlayed >= HANDS_TO_PLAY) {
         setTimeout(showVictory, 1500);
     } else if (G.bankroll < currentAnte(G.stats.handsPlayed)) {
         setTimeout(gameOver, 1500);
@@ -428,7 +440,7 @@ function fold() {
         resultBannerEl.innerHTML = resultHtml;
         updateUI();
         
-        if (G.stats.handsPlayed >= 40) {
+        if (G.stats.handsPlayed >= 1) {
             setTimeout(showVictory, 1000);
         } else {
             if (G.bankroll < currentAnte(G.stats.handsPlayed)) {
@@ -451,8 +463,25 @@ function showVictory() {
         SND.play(SND.gameOver);
     }, 1500);
 
+    const profit = G.bankroll - INITIAL_BANKROLL;
+    const victoryHeader = $('victory-overlay').querySelector('.go-header');
+    const victoryTitle = $('victory-overlay').querySelector('h2');
+    const profitLoss = $('vic-profit-label');
+
+    if (profit >= 0) {
+        victoryHeader.textContent = "You survived " + G.stats.handsPlayed + " hands! Whew!";
+        victoryTitle.textContent = "Honey I made some money, too! Dinner is on me!";
+        profitLoss.textContent = "Profit"
+    } else {
+        victoryHeader.textContent = "Oops...";
+        victoryTitle.textContent = "I survived " + G.stats.handsPlayed + " but I have some explaining to do...";
+        profitLoss.textContent = "Loss"
+    }
+
     $('vic-bank').textContent = '$' + G.bankroll;
+    $('vic-profit-sum').textContent = '$' + Math.abs(profit);
     $('vic-won').textContent = G.stats.handsWon;
+    $('vic-hands').textContent = G.stats.handsPlayed;
     const rate = G.stats.handsPlayed > 0 ? Math.round(G.stats.handsWon / G.stats.handsPlayed * 100) : 0;
     $('vic-rate').textContent = rate + '%';
     $('vic-biggest').textContent = '$' + G.stats.biggestWin;
@@ -483,6 +512,7 @@ function restart() {
     $('victory-overlay').classList.remove('show');
     resultBannerEl.innerHTML = '';
     updateUI();
+    
     newHand();
 }
 
@@ -519,8 +549,39 @@ msgBoxOverlay.onclick = (e) => {
     if (e.target === msgBoxOverlay) hideMessageBox();
 };
 
-// Title Click
-document.querySelector('header h1').onclick = () => {
+// Menu Events
+$('menu-new-game').onclick = restart;
+
+const optionsTrigger = $('menu-options-trigger');
+const optionsDropdown = $('options-dropdown');
+const soundCheckmark = $('menu-sound-toggle');
+
+function updateSoundCheckmark() {
+    if (SND.enabled) {
+        soundCheckmark.textContent = "Sounds enabled ✓";
+    } else {
+        soundCheckmark.textContent = "Sounds enabled";
+    }
+}
+
+optionsTrigger.onclick = (e) => {
+    e.stopPropagation();
+    optionsDropdown.classList.toggle('show');
+};
+
+$('menu-sound-toggle').onclick = (e) => {
+    e.stopPropagation();
+    SND.toggle();
+    updateSoundCheckmark();
+    optionsDropdown.classList.remove('show');
+};
+
+// Close dropdown when clicking elsewhere
+window.addEventListener('click', () => {
+    optionsDropdown.classList.remove('show');
+});
+
+$('menu-about').onclick = () => {
     const aboutContent = `
         <div style="text-align: center;">
             <p><strong>Hold'em Solitaire</strong></p>
@@ -533,10 +594,12 @@ document.querySelector('header h1').onclick = () => {
 
 // ─── Init ────────────────────────────────────────────────────────
 renderPayTable();
+updateSoundCheckmark();
 $('pay-table-header').onclick = () => {
     const table = $('pay-table');
     const header = $('pay-table-header');
     table.classList.toggle('collapsed');
     header.textContent = table.classList.contains('collapsed') ? 'Pay Table ▸' : 'Pay Table ▾';
 };
+
 newHand();

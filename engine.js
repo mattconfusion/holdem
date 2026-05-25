@@ -40,6 +40,7 @@ function isAnteWarningHand(handsPlayed) {
 }
 const STREET_MULTIPLIERS = [1.4, 1.2, 1.0];
 const INITIAL_BANKROLL = 500;
+const HANDS_TO_PLAY = 40;
 
 // ─── State Object ────────────────────────────────────────────────
 const G = {

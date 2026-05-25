@@ -15,13 +15,13 @@ Play it here: **[https://mattconfusion.github.io/holdem/](https://mattconfusion.
 
 **Hold'em Solitaire** is a single-player Texas Hold'em card game played against a fixed pay table. There are no AI opponents; instead, the tension comes from deciding how much to wager as your hand develops across multiple betting streets. 
 
-The goal is to build the strongest possible 5-card hand from your 2 hole cards and 5 community cards. Your final payout is determined by multiplying your weighted total wager by the multiplier of your final hand rank.
+The goal is to **resist 40 hands without breaking the bank.** At the end of the session, you'll need to return home to your spouse—hopefully with enough left to pay for dinner!
 
 ## Key Features
 
 - **Progressive Ante:** The ante increases every 10 hands ($5 → $10 → $15 → $20), creating a session clock that challenges your bankroll management.
 - **Early Bet Bonus:** Bets made on earlier streets carry more weight (Pre-Flop: 1.4×, Flop: 1.2×), rewarding players for committing to strong hole cards early.
-- **End Game Condition:** Reach **40 hands** with a remaining bankroll to win the session and view your final stats.
+- **The Survival Challenge:** Reach **40 hands** with a remaining bankroll to win the session. If you end up with more than you started, dinner is on you! If you're down, you might have some explaining to do.
 
 ## How to Play
 
@@ -48,6 +48,11 @@ The goal is to build the strongest possible 5-card hand from your 2 hole cards a
     *   *High Card (or Folding) results in losing the pot (0×).*
 
 Keep playing to reach the 40-hand milestone. Good luck!
+
+## Tips & Strategy
+
+-   **Bankroll Management:** With only 40 hands to play, every chip counts! Don't go broke before you hit the milestone, or you'll have some explaining to do at home.
+-   **Early Bird Bets:** Remember those early street multipliers? Committing with strong hole cards early can significantly boost your payouts. It's a risk, but the reward is sweeter!
 
 ## Credits
 

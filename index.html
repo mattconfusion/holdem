@@ -27,9 +27,22 @@
         </div>
     </header>
 
+    <nav class="win95-menu-bar">
+        <div class="menu-item" id="menu-new-game">New Game</div>
+        <div class="menu-dropdown">
+            <div class="menu-item" id="menu-options-trigger">Options</div>
+            <div class="dropdown-content" id="options-dropdown">
+                <div class="dropdown-item" id="menu-sound-toggle">
+                    Sounds enabled ✓
+                </div>
+            </div>
+        </div>
+        <div class="menu-item" id="menu-about">About</div>
+    </nav>
+
     <div id="pay-table-container">
-        <div id="pay-table-header">Pay Table ▾</div>
-        <div id="pay-table"></div>
+        <div id="pay-table-header">Pay Table ▸</div>
+        <div id="pay-table" class="collapsed"></div>
     </div>
 
     <div id="card-area">
@@ -109,7 +122,8 @@
             <h2>Congratulations! You've reached 40 hands.</h2>
             <div class="stat-grid">
                 <div>Final Bankroll</div><div id="vic-bank">$0</div>
-                <div>Hands Played</div><div id="vic-hands">40</div>
+                <div id="vic-profit-label">Profit/Loss</div><div id="vic-profit-sum">$0</div>
+                <div>Hands Played</div><div id="vic-hands">0</div>
                 <div>Hands Won</div><div id="vic-won">0</div>
                 <div>Win Rate</div><div id="vic-rate">0%</div>
                 <div>Biggest Win</div><div id="vic-biggest">$0</div>
