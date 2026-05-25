@@ -474,7 +474,7 @@ function showVictory() {
         profitLoss.textContent = "Profit"
     } else {
         victoryHeader.textContent = "Oops...";
-        victoryTitle.textContent = "I survived " + G.stats.handsPlayed + " but I have some explaining to do...";
+        victoryTitle.textContent = "I survived " + G.stats.handsPlayed + " hands but I have some explaining to do...";
         profitLoss.textContent = "Loss"
     }
 
@@ -554,34 +554,73 @@ $('menu-new-game').onclick = restart;
 
 const optionsTrigger = $('menu-options-trigger');
 const optionsDropdown = $('options-dropdown');
-const soundCheckmark = $('menu-sound-toggle');
+const helpTrigger = $('menu-help-trigger');
+const helpDropdown = $('help-dropdown');
+const soundToggle = $('menu-sound-toggle');
 
 function updateSoundCheckmark() {
     if (SND.enabled) {
-        soundCheckmark.textContent = "Sounds enabled ✓";
+        soundToggle.textContent = "Sounds enabled ✓";
     } else {
-        soundCheckmark.textContent = "Sounds enabled";
+        soundToggle.textContent = "Sounds enabled";
     }
+}
+
+function closeAllDropdowns() {
+    optionsDropdown.classList.remove('show');
+    helpDropdown.classList.remove('show');
 }
 
 optionsTrigger.onclick = (e) => {
     e.stopPropagation();
-    optionsDropdown.classList.toggle('show');
+    const isShowing = optionsDropdown.classList.contains('show');
+    closeAllDropdowns();
+    if (!isShowing) optionsDropdown.classList.add('show');
 };
 
-$('menu-sound-toggle').onclick = (e) => {
+helpTrigger.onclick = (e) => {
+    e.stopPropagation();
+    const isShowing = helpDropdown.classList.contains('show');
+    closeAllDropdowns();
+    if (!isShowing) helpDropdown.classList.add('show');
+};
+
+soundToggle.onclick = (e) => {
     e.stopPropagation();
     SND.toggle();
     updateSoundCheckmark();
-    optionsDropdown.classList.remove('show');
+    closeAllDropdowns();
 };
 
-// Close dropdown when clicking elsewhere
+$('menu-how-to-play').onclick = (e) => {
+    e.stopPropagation();
+    closeAllDropdowns();
+    const content = `
+        <div style="font-size: 11px; line-height: 1.4;">
+            <p><strong>Goal:</strong> Survive 40 hands without going broke.</p>
+            <p><strong>The Ante:</strong> Every hand starts with a mandatory Ante. It increases every 10 hands ($5, $10, $15, $20).</p>
+            <p><strong>Betting:</strong> You can bet on three streets:
+                <ul>
+                    <li><strong>Pre-flop:</strong> After hole cards are dealt.</li>
+                    <li><strong>Flop:</strong> After first 3 community cards.</li>
+                    <li><strong>Turn:</strong> After 4th community card.</li>
+                </ul>
+            </p>
+            <p><strong>Early Bird Bonus:</strong> Bets made early in the hand have higher weight (1.4x for Pre-flop, 1.2x for Flop) when calculating your final payout!</p>
+            <p><strong>Caps:</strong> Each street has a maximum bet limit to keep you from losing everything too fast.</p>
+        </div>
+    `;
+    showMessageBox('How to Play', content, true);
+};
+
+// Close dropdowns when clicking elsewhere
 window.addEventListener('click', () => {
-    optionsDropdown.classList.remove('show');
+    closeAllDropdowns();
 });
 
-$('menu-about').onclick = () => {
+$('menu-about').onclick = (e) => {
+    e.stopPropagation();
+    closeAllDropdowns();
     const aboutContent = `
         <div style="text-align: center;">
             <p><strong>Hold'em Solitaire</strong></p>
