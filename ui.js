@@ -295,7 +295,7 @@ function updateUI(skipCards = false) {
 }
 
 // ─── Actions ─────────────────────────────────────────────────────
-const WELCOME_MSG = "Goal: Resist " + HANDS_TO_PLAY + " hands without breaking the bank. Return to your spouse without loosing too much!";
+const WELCOME_MSG = `Goal: Resist ${HANDS_TO_PLAY} hands without breaking the bank. Return to your spouse without loosing too much!`;
 
 function newHand() {
     SND.play(SND.card);
@@ -440,7 +440,7 @@ function fold() {
         resultBannerEl.innerHTML = resultHtml;
         updateUI();
         
-        if (G.stats.handsPlayed >= 1) {
+        if (G.stats.handsPlayed >= HANDS_TO_PLAY) {
             setTimeout(showVictory, 1000);
         } else {
             if (G.bankroll < currentAnte(G.stats.handsPlayed)) {
@@ -469,15 +469,16 @@ function showVictory() {
     const profitLoss = $('vic-profit-label');
 
     if (profit >= 0) {
-        victoryHeader.textContent = "You survived " + G.stats.handsPlayed + " hands! Whew!";
+        victoryHeader.textContent = `You survived ${HANDS_TO_PLAY} hands! Whew!`;
         victoryTitle.textContent = "Honey I made some money, too! Dinner is on me!";
         profitLoss.textContent = "Profit"
     } else {
         victoryHeader.textContent = "Oops...";
-        victoryTitle.textContent = "I survived " + G.stats.handsPlayed + " hands but I have some explaining to do...";
+        victoryTitle.textContent = `I survived ${HANDS_TO_PLAY} hands but I have some explaining to do...`;
         profitLoss.textContent = "Loss"
     }
 
+    $('vic-milestone').textContent = HANDS_TO_PLAY;
     $('vic-bank').textContent = '$' + G.bankroll;
     $('vic-profit-sum').textContent = '$' + Math.abs(profit);
     $('vic-won').textContent = G.stats.handsWon;
@@ -597,7 +598,7 @@ $('menu-how-to-play').onclick = (e) => {
     closeAllDropdowns();
     const content = `
         <div style="font-size: 11px; line-height: 1.4;">
-            <p><strong>Goal:</strong> Survive 40 hands without going broke.</p>
+            <p><strong>Goal:</strong> Survive ${HANDS_TO_PLAY} hands without going broke.</p>
             <p><strong>The Ante:</strong> Every hand starts with a mandatory Ante. It increases every 10 hands ($5, $10, $15, $20).</p>
             <p><strong>Betting:</strong> You can bet on three streets:
                 <ul>

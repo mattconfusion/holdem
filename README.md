@@ -15,7 +15,7 @@ Play it here: **[https://mattconfusion.github.io/holdem/](https://mattconfusion.
 
 **Hold'em Solitaire** is a single-player Texas Hold'em card game played against a fixed pay table. There are no AI opponents; instead, the tension comes from deciding how much to wager as your hand develops across multiple betting streets. 
 
-The goal is to **resist 40 hands without breaking the bank.** At the end of the session, you'll need to return home to your spouse—hopefully with enough left to pay for dinner!
+The goal is to **resist ${HANDS_TO_PLAY} hands without breaking the bank.** At the end of the session, you'll need to return home to your spouse—hopefully with enough left to pay for dinner!
 
 ## Key Features
 
